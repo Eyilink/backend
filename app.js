@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const User = require("./DB/userModel");
 const jwt = require("jsonwebtoken");
 const auth = require("./auth");
-
+const Order = require("./DB/order");
 
 
 //
@@ -141,6 +141,49 @@ app.get("/free-endpoint", (request, response) => {
 // authentication endpoint
 app.get("/auth-endpoint", auth, (request, response) => {
   response.json({ message: "You are authorized to access me" });
+});
+
+
+app.get("/orders_view",async (request, response) => {
+  try{
+  const orders = await Order.find();
+
+  response.json({orders});
+  }catch(err)
+  {
+    response.json({message: err});
+  }
+})
+
+app.post("/orders", (request, response) => {
+  
+const order = new Order({
+  OrderName: request.body.OrderName,
+  OrderQuantity: request.body.OrderQuantity,
+  OrderAdress: request.body.OrderAdress
+});
+  
+
+// save the new user
+order
+  .save()
+  // return success if the new user is added to the database successfully
+  .then((result) => {
+    response.status(201).send({
+      message: "Order Created Successfully",
+      result,
+    });
+  })
+  // catch error if the new user wasn't added successfully to the database
+  .catch((error) => {
+    response.status(500).send({
+      message: "Error creating order",
+      error,
+    });
+  });
+
+
+ 
 });
 
 
