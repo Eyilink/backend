@@ -155,6 +155,24 @@ app.get("/orders_view",async (request, response) => {
   }
 })
 
+app.delete("/orders_view",(request,response)=>{
+  Order.deleteOne({
+    OrderName: request.body.OrderName
+  })
+  .then((result)=>{
+    response.status(201).send({
+      message: "Order Deleted Successfully",
+      result,
+    });
+  })
+  .catch((error) => {
+    response.status(500).send({
+      message: "Error deleting order",
+      error,
+    });
+  });
+})
+
 app.post("/orders", (request, response) => {
   
 const order = new Order({
